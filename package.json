@@ -1,0 +1,15 @@
+{
+  "name": "al-sit-menu-combined",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Al-Sit cafe menu site (two branches in one app) with admin dashboards",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^2.0.0"
+  }
+}

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#140e09" />
+<title>لوحة التحكم · مقهى الست</title>
+<script>window.BRANCH_BASE = "__BRANCH_BASE__";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg-0:#140e09; --bg-1:#1d140c;
+  --accent:#b88655; --accent-soft:#cda377;
+  --ink:#ece1d0; --muted:#b6a488;
+  --hair:rgba(184,134,85,.34);
+  --panel:rgba(22,15,9,.85);
+  --panel-border:rgba(184,134,85,.22);
+  --danger:#c85a4a;
+  --ok:#5fa472;
+}
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; }
+body{
+  font-family:"Tajawal",system-ui,sans-serif; color:var(--ink);
+  background:radial-gradient(120% 80% at 50% -10%, #2a1d11 0%, var(--bg-1) 42%, var(--bg-0) 100%);
+  min-height:100vh; padding:1rem;
+}
+h1,h2,h3{ font-family:"Amiri",serif; font-style:italic; font-weight:700; color:var(--ink); }
+.wrap{ max-width:920px; margin-inline:auto; }
+.brand{ display:flex; align-items:center; gap:.6rem; margin-bottom:1rem; color:var(--ink); }
+.brand img{ width:36px; height:36px; }
+.brand .word{ font-family:"Amiri",serif; font-style:italic; font-weight:700; font-size:1.2rem; }
+.brand .pill{ margin-inline-start:auto; padding:.25rem .7rem; border:1px solid var(--panel-border); border-radius:999px; color:var(--accent); font-size:.85rem; }
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--panel-border);
+  border-radius:18px;
+  padding:1.4rem; margin-bottom:1rem;
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  backdrop-filter:blur(14px) saturate(1.1);
+}
+label{ display:block; font-size:.85rem; color:var(--muted); margin-bottom:.3rem; }
+input[type=text], input[type=password], textarea, select{
+  width:100%; background:rgba(0,0,0,.35); color:var(--ink);
+  border:1px solid var(--panel-border); border-radius:10px;
+  padding:.55rem .7rem; font-family:inherit; font-size:.95rem;
+  font-variant-numeric:tabular-nums;
+}
+textarea{ resize:vertical; min-height:60px; }
+input:focus, textarea:focus, select:focus{ outline:none; border-color:var(--accent); }
+
+.btn{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.55rem 1rem; border-radius:999px; cursor:pointer;
+  border:1px solid var(--panel-border); background:transparent;
+  color:var(--ink); font-family:inherit; font-size:.92rem; font-weight:500;
+  transition:all .2s ease;
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent); }
+.btn.primary{ background:var(--accent); color:#1a120a; border-color:var(--accent); font-weight:700; }
+.btn.primary:hover{ background:var(--accent-soft); color:#1a120a; }
+.btn.danger{ color:var(--danger); border-color:rgba(200,90,74,.4); }
+.btn.danger:hover{ background:rgba(200,90,74,.12); border-color:var(--danger); }
+.btn.ghost{ color:var(--muted); border-style:dashed; }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+.toolbar{ display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
+.toolbar .spacer{ flex:1; }
+.muted{ color:var(--muted); }
+.kbd{ padding:1px 6px; border:1px solid var(--panel-border); border-radius:4px; font-size:.75rem; color:var(--muted); }
+
+/* login screen */
+.login-card{ max-width:360px; margin:6vh auto 0; }
+.login-card h1{ font-size:1.7rem; color:var(--accent); margin-bottom:.4rem; }
+.login-card p{ color:var(--muted); margin-bottom:1rem; font-size:.9rem; }
+.login-card .row{ display:flex; gap:.5rem; }
+.login-error{ color:var(--danger); font-size:.85rem; margin-top:.5rem; min-height:1.2em; }
+
+/* sections list */
+.section-card{ border:1px dashed var(--hair); border-radius:14px; padding:1rem; margin-bottom:.9rem; background:rgba(0,0,0,.18); }
+.section-head{
+  display:grid; grid-template-columns: 28px 1fr 1fr auto; gap:.5rem; align-items:center; margin-bottom:.6rem;
+}
+.section-head .grip{ color:var(--muted); cursor:grab; user-select:none; text-align:center; }
+.section-head .type-tag{
+  font-family:"Amiri",serif; font-style:italic; color:var(--accent);
+  border:1px solid var(--panel-border); border-radius:8px; padding:.2rem .55rem; font-size:.78rem;
+  text-align:center; letter-spacing:.05em;
+}
+.section-head .actions{ display:flex; gap:.3rem; }
+.section-head .actions .btn{ padding:.35rem .7rem; font-size:.8rem; }
+
+.field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.6rem; }
+.field-grid.three{ grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width:640px){
+  .field-grid, .field-grid.three{ grid-template-columns: 1fr; }
+  .section-head{ grid-template-columns: 28px 1fr auto; }
+  .section-head .type-tag{ display:none; }
+}
+
+.group-card{
+  border:1px solid var(--panel-border); border-radius:12px;
+  padding:.85rem; margin-bottom:.6rem; background:rgba(0,0,0,.25);
+}
+.group-head{ display:flex; gap:.5rem; align-items:center; margin-bottom:.5rem; }
+.group-head input{ flex:1; }
+
+.item-row{
+  display:grid; grid-template-columns: 18px 1fr 110px 32px 32px 32px; gap:.4rem;
+  align-items:start; margin-bottom:.35rem;
+  padding:.5rem; border:1px dashed var(--hair); border-radius:10px;
+  background:rgba(255,255,255,.02);
+}
+.item-row .grip{ color:var(--muted); text-align:center; padding-top:.35rem; cursor:grab; }
+.item-row .name-cell input{ margin-bottom:.3rem; }
+.item-row .name-cell textarea{ font-size:.85rem; }
+.item-row .price-cell input{ text-align:left; direction:ltr; }
+.item-row .icon-btn{
+  width:32px; height:32px; padding:0; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:8px; font-size:1rem;
+}
+@media (max-width:640px){
+  .item-row{ grid-template-columns: 1fr 110px; gap:.4rem; }
+  .item-row .grip{ display:none; }
+  .item-row .actions-cell{ grid-column: 1 / -1; display:flex; gap:.3rem; justify-content:flex-end; }
+  .item-row .icon-btn{ width:auto; padding:.35rem .7rem; }
+}
+
+/* status bar */
+.statusbar{
+  position:sticky; bottom:0; z-index:10;
+  background:var(--panel); border:1px solid var(--panel-border); border-radius:14px;
+  padding:.7rem 1rem; margin-top:1rem;
+  display:flex; gap:.6rem; align-items:center; flex-wrap:wrap;
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+}
+.statusbar .info{ flex:1; min-width:180px; color:var(--muted); font-size:.85rem; }
+.statusbar .info .ok{ color:var(--ok); }
+.statusbar .info .warn{ color:var(--accent-soft); }
+.statusbar .info .err{ color:var(--danger); }
+
+.dot-saved{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--ok); margin-inline-end:.4rem; }
+.dot-dirty{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); margin-inline-end:.4rem; }
+
+/* json modal */
+.modal-bg{
+  position:fixed; inset:0; z-index:100; display:none;
+  background:rgba(0,0,0,.7); align-items:center; justify-content:center; padding:1rem;
+}
+.modal-bg.open{ display:flex; }
+.modal{
+  width:100%; max-width:780px; max-height:90vh;
+  background:var(--bg-1); border:1px solid var(--panel-border); border-radius:18px;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.modal header{ padding:1rem; border-bottom:1px solid var(--panel-border); display:flex; align-items:center; }
+.modal header h2{ font-size:1.2rem; flex:1; color:var(--accent); }
+.modal .body{ padding:1rem; overflow:auto; flex:1; }
+.modal .body textarea{ width:100%; min-height:50vh; font-family:ui-monospace,"Cascadia Code",Consolas,monospace; font-size:.85rem; direction:ltr; text-align:left; }
+.modal footer{ padding:.8rem 1rem; border-top:1px solid var(--panel-border); display:flex; gap:.5rem; justify-content:flex-end; }
+
+.toast{
+  position:fixed; bottom:1rem; left:50%; transform:translateX(-50%) translateY(40px);
+  background:var(--bg-1); color:var(--ink); padding:.7rem 1.1rem;
+  border:1px solid var(--panel-border); border-radius:999px;
+  font-size:.9rem; opacity:0; transition:all .3s ease; z-index:200; pointer-events:none;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.ok{ border-color:var(--ok); color:var(--ok); }
+.toast.err{ border-color:var(--danger); color:var(--danger); }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="appRoot">
+
+  <!-- ===== LOGIN SCREEN ===== -->
+  <section id="loginView" class="panel login-card">
+    <h1>لوحة التحكم</h1>
+    <p>الرجاء إدخال كلمة المرور للدخول.</p>
+    <label for="pw">كلمة المرور</label>
+    <div class="row">
+      <input id="pw" type="password" autocomplete="current-password" placeholder="••••••••" />
+      <button class="btn primary" id="loginBtn">دخول</button>
+    </div>
+    <div class="login-error" id="loginErr"></div>
+  </section>
+
+  <!-- ===== EDITOR SCREEN ===== -->
+  <div id="editorView" style="display:none">
+
+    <div class="brand">
+      <img src="logo-256.png" alt="" />
+      <span class="word">مقهى الست</span>
+      <span class="pill">لوحة التحكم</span>
+      <button class="btn" id="logoutBtn" style="margin-inline-start:.5rem">خروج</button>
+    </div>
+
+    <!-- META -->
+    <details class="panel" open>
+      <summary style="cursor:pointer; font-weight:700; color:var(--accent); font-family:'Amiri',serif; font-style:italic; font-size:1.1rem">معلومات عامة وفوتر</summary>
+      <div style="margin-top:.9rem">
+        <div class="field-grid">
+          <div><label>اسم المقهى</label><input id="m_brand" type="text" /></div>
+          <div><label>عنوان المنيو</label><input id="m_menuLabel" type="text" /></div>
+        </div>
+        <div><label>الشعار / الوصف</label><input id="m_tagline" type="text" /></div>
+        <hr style="border:0;border-top:1px dashed var(--hair); margin:1rem 0" />
+        <div class="field-grid">
+          <div><label>عنوان أوقات العمل</label><input id="m_hoursTitle" type="text" /></div>
+          <div><label>نص أوقات العمل</label><input id="m_hoursText" type="text" /></div>
+        </div>
+        <div class="field-grid">
+          <div><label>عنوان الحجوزات</label><input id="m_reservationsTitle" type="text" /></div>
+          <div><label>نص الحجوزات</label><input id="m_reservationsText" type="text" /></div>
+        </div>
+        <div class="field-grid">
+          <div><label>الهاتف 1</label><input id="m_phone1" type="text" dir="ltr" /></div>
+          <div><label>الهاتف 2</label><input id="m_phone2" type="text" dir="ltr" /></div>
+        </div>
+        <div class="field-grid three">
+          <div><label>سطر السنة</label><input id="m_year" type="text" /></div>
+          <div><label>سطر الأسعار</label><input id="m_priceNote" type="text" /></div>
+          <div><label>الكريديت</label><input id="m_credit" type="text" dir="ltr" /></div>
+        </div>
+      </div>
+    </details>
+
+    <!-- OFFER -->
+    <details class="panel" id="offerPanel">
+      <summary style="cursor:pointer; font-weight:700; color:var(--accent); font-family:'Amiri',serif; font-style:italic; font-size:1.1rem">
+        العرض المنبثق <span id="offerStatusPill" class="muted" style="font-size:.78rem; font-family:Tajawal,sans-serif; margin-inline-start:.5rem; font-style:normal"></span>
+      </summary>
+      <div style="margin-top:.9rem">
+        <div class="field-grid">
+          <div>
+            <label>تفعيل العرض</label>
+            <label class="switch" style="display:inline-flex;align-items:center;gap:.5rem;cursor:pointer">
+              <input id="o_enabled" type="checkbox" />
+              <span class="muted">عند التفعيل، سيظهر العرض للزوار عند فتح المنيو.</span>
+            </label>
+          </div>
+          <div>
+            <label>إظهار مرة واحدة لكل زائر</label>
+            <label style="display:inline-flex;align-items:center;gap:.5rem;cursor:pointer">
+              <input id="o_showOnce" type="checkbox" />
+              <span class="muted">يتذكر متصفح الزائر أنه شاهد العرض.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div><label>العنوان</label><input id="o_title" type="text" placeholder="مثال: اكتشف عروض رمضان" /></div>
+          <div><label>السطر الفرعي</label><input id="o_subtitle" type="text" placeholder="مثال: خصم ٢٠٪ على كل المشروبات الباردة" /></div>
+        </div>
+
+        <div>
+          <label>رابط عند الضغط (اختياري)</label>
+          <input id="o_ctaHref" type="text" dir="ltr" placeholder="https://wa.me/9647768880885" />
+          <span class="muted" style="font-size:.78rem">إن وُضع رابط تصبح البطاقة قابلة للضغط وتفتح الرابط.</span>
+        </div>
+
+        <label>صورة العرض</label>
+        <div id="offerImageBox" style="display:flex; flex-wrap:wrap; gap:.7rem; align-items:center; padding:.7rem; border:1px dashed var(--hair); border-radius:12px; background:rgba(0,0,0,.18)">
+          <div id="offerImagePreview" style="
+            width:120px; height:120px; border-radius:10px;
+            background:#0d0905 center/cover no-repeat;
+            border:1px solid var(--panel-border); flex:0 0 auto;
+            display:flex; align-items:center; justify-content:center;
+            color:var(--muted); font-size:.78rem; text-align:center;">لا توجد صورة</div>
+          <div style="display:flex; flex-direction:column; gap:.4rem; flex:1; min-width:200px">
+            <input type="file" id="offerFile" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" />
+            <button class="btn" type="button" id="offerUploadBtn">رفع صورة جديدة</button>
+            <button class="btn ghost" type="button" id="offerRemoveBtn">إزالة الصورة</button>
+            <span class="muted" style="font-size:.78rem">JPG / PNG / WEBP / GIF · حد أقصى 6 ميجا</span>
+            <span id="offerUploadStatus" class="muted" style="font-size:.8rem"></span>
+          </div>
+        </div>
+
+        <div style="margin-top:.9rem; display:flex; gap:.5rem; align-items:center; flex-wrap:wrap">
+          <button class="btn" type="button" id="offerBumpVersionBtn">إعادة عرض للجميع</button>
+          <span class="muted" style="font-size:.8rem">يجبر إعادة الظهور حتى لمن شاهدوا العرض سابقاً.</span>
+        </div>
+      </div>
+    </details>
+
+    <!-- TOP TOOLBAR -->
+    <div class="panel">
+      <div class="toolbar">
+        <button class="btn" id="addSectionBtn">+ قسم جديد</button>
+        <button class="btn ghost" id="addPauseBtn">+ فاصل (اقتباس)</button>
+        <span class="spacer"></span>
+        <button class="btn" id="exportBtn">تصدير JSON</button>
+        <button class="btn" id="importBtn">استيراد JSON</button>
+        <button class="btn" id="reloadBtn">تحديث من الخادم</button>
+      </div>
+    </div>
+
+    <!-- BLOCKS LIST -->
+    <div id="blocksList"></div>
+
+    <!-- STATUS BAR -->
+    <div class="statusbar">
+      <div class="info" id="statusInfo"><span class="dot-saved"></span>جاهز</div>
+      <button class="btn" id="previewBtn">معاينة</button>
+      <button class="btn primary" id="saveBtn">حفظ التغييرات</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- JSON modal -->
+<div class="modal-bg" id="jsonModal">
+  <div class="modal">
+    <header>
+      <h2 id="jsonTitle">JSON</h2>
+      <button class="btn" data-close-modal>إغلاق</button>
+    </header>
+    <div class="body">
+      <textarea id="jsonText" spellcheck="false"></textarea>
+    </div>
+    <footer>
+      <button class="btn" data-close-modal>إلغاء</button>
+      <button class="btn primary" id="jsonApplyBtn" style="display:none">تطبيق</button>
+    </footer>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ADMIN APP STATE  (kept simple, single mutable object)
+   ============================================================ */
+var state = {
+  pass: sessionStorage.getItem("alsit_pass_" + (window.BRANCH_BASE || "root")) || "",
+  data: null,            // current menu in memory
+  serverData: null,      // last loaded from server (for dirty check)
+  saving: false,
+};
+
+/* ===== utilities ===== */
+function $(sel, root){ return (root || document).querySelector(sel); }
+function $$(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function el(html){
+  var t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function eq(a, b){ return JSON.stringify(a) === JSON.stringify(b); }
+function toast(msg, kind){
+  var t = $("#toast");
+  t.className = "toast show " + (kind || "");
+  t.textContent = msg;
+  clearTimeout(toast._h);
+  toast._h = setTimeout(function(){ t.className = "toast"; }, 2400);
+}
+function setStatus(text, kind){
+  var dot = kind === "dirty" ? '<span class="dot-dirty"></span>' : '<span class="dot-saved"></span>';
+  $("#statusInfo").innerHTML = dot + (text || "");
+}
+function markDirty(){
+  var dirty = !eq(state.data, state.serverData);
+  setStatus(dirty ? "تغييرات غير محفوظة" : "محفوظ", dirty ? "dirty" : "saved");
+}
+
+/* ===== auth + io ===== */
+function api(path, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({ "Content-Type":"application/json", "x-admin-pass": state.pass }, opts.headers || {});
+  return fetch(BRANCH_BASE + path, opts).then(function(r){
+    if (r.status === 401){ logout(); throw new Error("unauthorized"); }
+    return r.json().then(function(j){ return { ok:r.ok, status:r.status, body:j }; });
+  });
+}
+
+function tryLogin(){
+  var pw = $("#pw").value.trim();
+  $("#loginErr").textContent = "";
+  if (!pw){ $("#loginErr").textContent = "أدخل كلمة المرور"; return; }
+  fetch(BRANCH_BASE + "/api/login", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ password: pw })
+  }).then(function(r){ return r.json().then(function(j){ return { ok:r.ok, body:j }; }); })
+    .then(function(res){
+      if (!res.ok){ $("#loginErr").textContent = "كلمة مرور غير صحيحة"; return; }
+      state.pass = pw;
+      sessionStorage.setItem("alsit_pass_" + (window.BRANCH_BASE || "root"), pw);
+      enterEditor();
+    })
+    .catch(function(){ $("#loginErr").textContent = "تعذر الاتصال بالخادم"; });
+}
+
+function logout(){
+  state.pass = "";
+  sessionStorage.removeItem("alsit_pass_" + (window.BRANCH_BASE || "root"));
+  $("#editorView").style.display = "none";
+  $("#loginView").style.display  = "";
+  $("#pw").value = "";
+}
+
+function enterEditor(){
+  $("#loginView").style.display  = "none";
+  $("#editorView").style.display = "";
+  loadMenu();
+}
+
+function loadMenu(){
+  setStatus("جاري التحميل…");
+  fetch(BRANCH_BASE + "/api/menu", { cache:"no-store" })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      state.data = data;
+      state.serverData = clone(data);
+      renderMeta();
+      renderBlocks();
+      setStatus("تم التحميل", "saved");
+    })
+    .catch(function(e){ setStatus("فشل التحميل", "dirty"); console.error(e); });
+}
+
+function saveMenu(){
+  if (state.saving) return;
+  state.saving = true;
+  setStatus("جاري الحفظ…");
+  api("/api/menu", { method:"POST", body: JSON.stringify({ menu: state.data }) })
+    .then(function(res){
+      state.saving = false;
+      if (!res.ok){
+        toast("فشل الحفظ: " + (res.body && res.body.error || res.status), "err");
+        setStatus("فشل الحفظ", "dirty");
+        return;
+      }
+      state.serverData = clone(state.data);
+      toast("تم الحفظ بنجاح ✓", "ok");
+      setStatus("محفوظ · " + new Date().toLocaleTimeString("ar"), "saved");
+    })
+    .catch(function(e){
+      state.saving = false;
+      toast("فشل الحفظ", "err");
+      setStatus("فشل الحفظ", "dirty");
+      console.error(e);
+    });
+}
+
+/* ===== meta render ===== */
+function renderMeta(){
+  var m = state.data.meta || (state.data.meta = {});
+  var f = m.footer || (m.footer = {});
+  var bind = {
+    m_brand: m, m_tagline: m, m_menuLabel: m,
+    m_hoursTitle:f, m_hoursText:f, m_reservationsTitle:f, m_reservationsText:f,
+    m_year:f, m_priceNote:f, m_credit:f
+  };
+  Object.keys(bind).forEach(function(id){
+    var key = id.replace("m_", "");
+    var input = document.getElementById(id);
+    var src = bind[id];
+    input.value = src[key] != null ? src[key] : "";
+    input.oninput = function(){ src[key] = input.value; markDirty(); };
+  });
+  var phones = (f.phones && f.phones.slice()) || ["",""];
+  $("#m_phone1").value = phones[0] || "";
+  $("#m_phone2").value = phones[1] || "";
+  $("#m_phone1").oninput = $("#m_phone2").oninput = function(){
+    f.phones = [ $("#m_phone1").value, $("#m_phone2").value ].filter(function(s){ return s.length; });
+    markDirty();
+  };
+  // creditNum lives next to credit
+  if (!document.getElementById("m_creditNum")){
+    var creditField = $("#m_credit").parentNode;
+    var wrap = document.createElement("div");
+    wrap.innerHTML = '<label>رقم الكريديت</label><input id="m_creditNum" type="text" dir="ltr" />';
+    creditField.parentNode.appendChild(wrap);
+  }
+  var cn = document.getElementById("m_creditNum");
+  cn.value = f.creditNum || "";
+  cn.oninput = function(){ f.creditNum = cn.value; markDirty(); };
+
+  renderOffer();
+}
+
+/* ===== offer editor ===== */
+function renderOffer(){
+  var m = state.data.meta || (state.data.meta = {});
+  var o = m.offer || (m.offer = { enabled:false, version:1, image:"", title:"", subtitle:"", ctaLabel:"", ctaHref:"", showOnce:true });
+
+  function bindText(id, key){
+    var el = document.getElementById(id);
+    el.value = o[key] != null ? o[key] : "";
+    el.oninput = function(){ o[key] = el.value; markDirty(); updateOfferPill(); };
+  }
+  function bindBool(id, key){
+    var el = document.getElementById(id);
+    el.checked = !!o[key];
+    el.onchange = function(){ o[key] = el.checked; markDirty(); updateOfferPill(); };
+  }
+  bindText("o_title", "title");
+  bindText("o_subtitle", "subtitle");
+  bindText("o_ctaHref", "ctaHref");
+  bindBool("o_enabled", "enabled");
+  bindBool("o_showOnce", "showOnce");
+
+  // image preview
+  var prev = document.getElementById("offerImagePreview");
+  if (o.image){
+    prev.style.background = 'url("'+o.image+'") center/cover no-repeat #0d0905';
+    prev.textContent = "";
+  } else {
+    prev.style.background = "#0d0905";
+    prev.textContent = "لا توجد صورة";
+  }
+
+  updateOfferPill();
+}
+
+function updateOfferPill(){
+  var pill = document.getElementById("offerStatusPill");
+  if (!pill) return;
+  var o = state.data.meta && state.data.meta.offer;
+  if (!o){ pill.textContent = ""; return; }
+  pill.textContent = o.enabled ? "· مُفعّل" : "· معطّل";
+  pill.style.color = o.enabled ? "var(--ok)" : "var(--muted)";
+}
+
+function setUploadStatus(msg, kind){
+  var s = document.getElementById("offerUploadStatus");
+  if (!s) return;
+  s.textContent = msg || "";
+  s.style.color = kind === "err" ? "var(--danger)" : (kind === "ok" ? "var(--ok)" : "var(--muted)");
+}
+
+function uploadOfferImage(file){
+  if (!file) return;
+  if (file.size > 6 * 1024 * 1024){ setUploadStatus("الصورة أكبر من 6 ميجا", "err"); return; }
+  setUploadStatus("جاري الرفع…");
+  var fd = new FormData();
+  fd.append("image", file);
+  fetch(BRANCH_BASE + "/api/upload", {
+    method:"POST",
+    headers:{ "x-admin-pass": state.pass },
+    body: fd
+  }).then(function(r){ return r.json().then(function(j){ return { ok:r.ok, body:j }; }); })
+    .then(function(res){
+      if (!res.ok){ setUploadStatus(res.body && res.body.error || "فشل الرفع", "err"); return; }
+      var url = res.body.url;
+      state.data.meta.offer = state.data.meta.offer || {};
+      state.data.meta.offer.image = url;
+      // bump version so all users see the new image
+      state.data.meta.offer.version = (state.data.meta.offer.version || 1) + 1;
+      renderOffer();
+      markDirty();
+      setUploadStatus("تم الرفع · لا تنس الحفظ", "ok");
+      toast("تم رفع الصورة. اضغط حفظ التغييرات.", "ok");
+    })
+    .catch(function(){ setUploadStatus("فشل الرفع", "err"); });
+}
+
+/* ===== blocks render ===== */
+function renderBlocks(){
+  var list = $("#blocksList");
+  list.innerHTML = "";
+  (state.data.blocks || []).forEach(function(b, idx){
+    list.appendChild(b.type === "pause" ? renderPauseBlock(b, idx) : renderSectionBlock(b, idx));
+  });
+}
+
+function moveBlock(idx, dir){
+  var arr = state.data.blocks;
+  var newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= arr.length) return;
+  var [item] = arr.splice(idx, 1);
+  arr.splice(newIdx, 0, item);
+  renderBlocks();
+  markDirty();
+}
+function deleteBlock(idx){
+  if (!confirm("حذف هذا القسم؟")) return;
+  state.data.blocks.splice(idx, 1);
+  renderBlocks();
+  markDirty();
+}
+
+function renderPauseBlock(b, idx){
+  var node = el(
+    '<div class="section-card" data-idx="'+idx+'">' +
+      '<div class="section-head">' +
+        '<span class="grip">⋮⋮</span>' +
+        '<span class="type-tag">فاصل</span>' +
+        '<input type="text" placeholder="نص الفاصل (يدعم HTML بسيط)" />' +
+        '<div class="actions">' +
+          '<button class="btn" data-up>↑</button>' +
+          '<button class="btn" data-down>↓</button>' +
+          '<button class="btn danger" data-del>حذف</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+  var input = $("input", node);
+  input.value = b.text || "";
+  input.oninput = function(){ b.text = input.value; markDirty(); };
+  $("[data-up]", node).onclick = function(){ moveBlock(idx, -1); };
+  $("[data-down]", node).onclick = function(){ moveBlock(idx, +1); };
+  $("[data-del]", node).onclick = function(){ deleteBlock(idx); };
+  return node;
+}
+
+function renderSectionBlock(b, idx){
+  var node = el(
+    '<div class="section-card" data-idx="'+idx+'">' +
+      '<div class="section-head">' +
+        '<span class="grip">⋮⋮</span>' +
+        '<span class="type-tag">قسم</span>' +
+        '<input type="text" data-field="title" placeholder="عنوان القسم" />' +
+        '<div class="actions">' +
+          '<button class="btn" data-up>↑</button>' +
+          '<button class="btn" data-down>↓</button>' +
+          '<button class="btn danger" data-del>حذف</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field-grid three">' +
+        '<div><label>اسم النافبار</label><input type="text" data-field="navLabel" /></div>' +
+        '<div><label>المعرّف (id)</label><input type="text" data-field="id" dir="ltr" /></div>' +
+        '<div><label>تنبية صغير (٠١ · …)</label><input type="text" data-field="eyebrow" /></div>' +
+      '</div>' +
+      '<div class="groups-host"></div>' +
+      '<div style="margin-top:.4rem"><button class="btn ghost" data-add-group>+ مجموعة فرعية</button></div>' +
+    '</div>'
+  );
+  // basic fields
+  ["title","navLabel","id","eyebrow"].forEach(function(f){
+    var inp = $('[data-field="'+f+'"]', node);
+    inp.value = b[f] || "";
+    inp.oninput = function(){ b[f] = inp.value; markDirty(); };
+  });
+  // actions
+  $("[data-up]", node).onclick = function(){ moveBlock(idx, -1); };
+  $("[data-down]", node).onclick = function(){ moveBlock(idx, +1); };
+  $("[data-del]", node).onclick = function(){ deleteBlock(idx); };
+
+  // groups
+  if (!Array.isArray(b.groups)) b.groups = [{ title:null, items:[] }];
+  var groupHost = $(".groups-host", node);
+  b.groups.forEach(function(g, gi){ groupHost.appendChild(renderGroup(b, g, gi)); });
+
+  $("[data-add-group]", node).onclick = function(){
+    b.groups.push({ title:"مجموعة جديدة", items:[] });
+    renderBlocks(); markDirty();
+  };
+
+  return node;
+}
+
+function renderGroup(parentBlock, g, gi){
+  var node = el(
+    '<div class="group-card" data-gi="'+gi+'">' +
+      '<div class="group-head">' +
+        '<input type="text" placeholder="اسم المجموعة (اختياري)" />' +
+        '<button class="btn ghost" data-add-item>+ صنف</button>' +
+        '<button class="btn" data-up>↑</button>' +
+        '<button class="btn" data-down>↓</button>' +
+        '<button class="btn danger" data-del>×</button>' +
+      '</div>' +
+      '<div class="items-host"></div>' +
+    '</div>'
+  );
+  var titleInput = $("input", node);
+  titleInput.value = g.title || "";
+  titleInput.oninput = function(){ g.title = titleInput.value || null; markDirty(); };
+
+  $("[data-add-item]", node).onclick = function(){
+    g.items.push({ name:"صنف جديد", price:"0" });
+    renderBlocks(); markDirty();
+  };
+  $("[data-up]", node).onclick = function(){
+    if (gi <= 0) return;
+    var [it] = parentBlock.groups.splice(gi, 1);
+    parentBlock.groups.splice(gi - 1, 0, it);
+    renderBlocks(); markDirty();
+  };
+  $("[data-down]", node).onclick = function(){
+    if (gi >= parentBlock.groups.length - 1) return;
+    var [it] = parentBlock.groups.splice(gi, 1);
+    parentBlock.groups.splice(gi + 1, 0, it);
+    renderBlocks(); markDirty();
+  };
+  $("[data-del]", node).onclick = function(){
+    if (!confirm("حذف هذه المجموعة وكل أصنافها؟")) return;
+    parentBlock.groups.splice(gi, 1);
+    renderBlocks(); markDirty();
+  };
+
+  var itemHost = $(".items-host", node);
+  if (!Array.isArray(g.items)) g.items = [];
+  g.items.forEach(function(it, ii){ itemHost.appendChild(renderItem(g, it, ii)); });
+
+  return node;
+}
+
+function renderItem(group, it, ii){
+  var node = el(
+    '<div class="item-row" data-ii="'+ii+'">' +
+      '<span class="grip">⋮</span>' +
+      '<div class="name-cell">' +
+        '<input type="text" data-f="name" placeholder="اسم الصنف" />' +
+        '<textarea data-f="desc" placeholder="الوصف (اختياري)"></textarea>' +
+      '</div>' +
+      '<div class="price-cell"><input type="text" data-f="price" placeholder="السعر" /></div>' +
+      '<button class="btn icon-btn" data-up title="أعلى">↑</button>' +
+      '<button class="btn icon-btn" data-down title="أسفل">↓</button>' +
+      '<button class="btn icon-btn danger" data-del title="حذف">×</button>' +
+    '</div>'
+  );
+  ["name","desc","price"].forEach(function(f){
+    var inp = $('[data-f="'+f+'"]', node);
+    inp.value = it[f] != null ? it[f] : "";
+    inp.oninput = function(){
+      var v = inp.value;
+      if (f === "desc" && !v) delete it.desc;
+      else it[f] = v;
+      markDirty();
+    };
+  });
+  // optional note field — show via small toggle if present
+  if (it.note != null){
+    var noteInput = el('<input type="text" placeholder="ملاحظة (note)" style="margin-top:.3rem; font-size:.85rem" />');
+    noteInput.value = it.note;
+    noteInput.oninput = function(){ it.note = noteInput.value; markDirty(); };
+    $(".name-cell", node).appendChild(noteInput);
+  }
+  $("[data-up]", node).onclick = function(){
+    if (ii <= 0) return;
+    var [x] = group.items.splice(ii, 1);
+    group.items.splice(ii - 1, 0, x);
+    renderBlocks(); markDirty();
+  };
+  $("[data-down]", node).onclick = function(){
+    if (ii >= group.items.length - 1) return;
+    var [x] = group.items.splice(ii, 1);
+    group.items.splice(ii + 1, 0, x);
+    renderBlocks(); markDirty();
+  };
+  $("[data-del]", node).onclick = function(){
+    if (!confirm("حذف هذا الصنف؟")) return;
+    group.items.splice(ii, 1);
+    renderBlocks(); markDirty();
+  };
+  return node;
+}
+
+/* ===== global toolbar actions ===== */
+function addSection(){
+  var n = (state.data.blocks || []).length + 1;
+  state.data.blocks.push({
+    type:"section",
+    id: "section-" + Date.now().toString(36),
+    navLabel: "قسم " + n,
+    title: "قسم جديد",
+    groups: [{ title:null, items:[{ name:"صنف جديد", price:"0" }] }]
+  });
+  renderBlocks(); markDirty();
+  window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+}
+function addPause(){
+  state.data.blocks.push({ type:"pause", text:"اقتباس جديد" });
+  renderBlocks(); markDirty();
+  window.scrollTo({ top: document.body.scrollHeight, behavior:"smooth" });
+}
+
+/* ===== JSON modal ===== */
+function openJson(title, text, applyHandler){
+  $("#jsonTitle").textContent = title;
+  $("#jsonText").value = text;
+  $("#jsonModal").classList.add("open");
+  if (applyHandler){
+    $("#jsonApplyBtn").style.display = "";
+    $("#jsonApplyBtn").onclick = function(){
+      try {
+        var parsed = JSON.parse($("#jsonText").value);
+        applyHandler(parsed);
+        $("#jsonModal").classList.remove("open");
+      } catch (e){ toast("JSON غير صالح: " + e.message, "err"); }
+    };
+  } else {
+    $("#jsonApplyBtn").style.display = "none";
+  }
+}
+
+/* ===== bindings ===== */
+function bindEvents(){
+  $("#loginBtn").onclick = tryLogin;
+  $("#pw").addEventListener("keydown", function(e){ if (e.key === "Enter") tryLogin(); });
+  $("#logoutBtn").onclick = logout;
+  $("#saveBtn").onclick = saveMenu;
+  $("#reloadBtn").onclick = function(){
+    if (state.serverData && !eq(state.data, state.serverData)){
+      if (!confirm("لديك تغييرات غير محفوظة. متابعة وإهمالها؟")) return;
+    }
+    loadMenu();
+  };
+  $("#previewBtn").onclick = function(){ window.open("/", "_blank"); };
+  $("#addSectionBtn").onclick = addSection;
+  $("#addPauseBtn").onclick = addPause;
+  $("#exportBtn").onclick = function(){
+    openJson("تصدير المنيو", JSON.stringify(state.data, null, 2));
+  };
+  $("#importBtn").onclick = function(){
+    openJson("استيراد المنيو", JSON.stringify(state.data, null, 2), function(parsed){
+      if (!parsed || !Array.isArray(parsed.blocks)){ toast("شكل JSON غير صحيح", "err"); return; }
+      state.data = parsed;
+      renderMeta(); renderBlocks(); markDirty();
+      toast("تم الاستيراد", "ok");
+    });
+  };
+  $$("[data-close-modal]").forEach(function(b){ b.onclick = function(){ $("#jsonModal").classList.remove("open"); }; });
+
+  // offer image upload
+  var fileInput = document.getElementById("offerFile");
+  document.getElementById("offerUploadBtn").onclick = function(){ fileInput.click(); };
+  fileInput.onchange = function(){
+    var f = fileInput.files && fileInput.files[0];
+    if (f) uploadOfferImage(f);
+    fileInput.value = "";
+  };
+  document.getElementById("offerRemoveBtn").onclick = function(){
+    if (!state.data.meta || !state.data.meta.offer || !state.data.meta.offer.image) return;
+    state.data.meta.offer.image = "";
+    state.data.meta.offer.version = (state.data.meta.offer.version || 1) + 1;
+    renderOffer();
+    markDirty();
+    setUploadStatus("تمت الإزالة · لا تنس الحفظ", "ok");
+  };
+  document.getElementById("offerBumpVersionBtn").onclick = function(){
+    state.data.meta.offer = state.data.meta.offer || {};
+    state.data.meta.offer.version = (state.data.meta.offer.version || 1) + 1;
+    markDirty();
+    toast("سيظهر العرض من جديد لكل الزوار بعد الحفظ.", "ok");
+  };
+
+  // Ctrl/Cmd + S to save
+  document.addEventListener("keydown", function(e){
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s"){
+      if ($("#editorView").style.display !== "none"){
+        e.preventDefault();
+        saveMenu();
+      }
+    }
+  });
+
+  // beforeunload guard
+  window.addEventListener("beforeunload", function(e){
+    if (state.serverData && !eq(state.data, state.serverData)){
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+}
+
+/* ===== init ===== */
+bindEvents();
+if (state.pass){
+  // verify saved password
+  fetch(BRANCH_BASE + "/api/login", {
+    method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ password: state.pass })
+  }).then(function(r){
+    if (r.ok) enterEditor();
+    else logout();
+  }).catch(function(){ logout(); });
+}
+</script>
+</body>
+</html>

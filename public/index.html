@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#140e09" />
+<title>مقهى الست · المنيو</title>
+<meta name="description" content="منيو مقهى الست أم كلثوم · نكهات بطعم الزمن الجميل" />
+<script>window.BRANCH_BASE = "__BRANCH_BASE__";</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --bg-0:#140e09;
+  --bg-1:#1d140c;
+  --accent:#b88655;
+  --accent-soft:#cda377;
+  --ink:#ece1d0;
+  --ink-dim:#c3b0a0;
+  --muted:#b6a488;
+  --hair:rgba(184,134,85,.34);
+  --panel:rgba(22,15,9,.60);
+  --panel-strong:rgba(16,11,7,.84);
+  --panel-border:rgba(184,134,85,.18);
+  --radius:18px;
+  --pad:1.15rem;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{ -webkit-text-size-adjust:100%; }
+body{
+  font-family:"Tajawal",system-ui,sans-serif; color:var(--ink);
+  background:radial-gradient(120% 80% at 50% -10%, #2a1d11 0%, var(--bg-1) 42%, var(--bg-0) 100%);
+  line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+.bg-stage{ position:fixed; inset:0; z-index:-3; overflow:hidden; }
+.bg-stage video, .bg-stage img.poster{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;
+}
+.scrim{
+  position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(130% 90% at 50% 18%, rgba(20,14,9,.20) 0%, rgba(20,14,9,.55) 55%, rgba(15,10,6,.84) 100%),
+    linear-gradient(180deg, rgba(15,10,6,.55) 0%, rgba(15,10,6,.30) 30%, rgba(15,10,6,.62) 100%);
+}
+.grain{
+  position:fixed; inset:0; z-index:60; pointer-events:none;
+  mix-blend-mode:overlay; opacity:.09;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px 160px;
+}
+.wrap{ width:100%; max-width:520px; margin-inline:auto; padding-inline:var(--pad); }
+.panel{
+  background:var(--panel);
+  -webkit-backdrop-filter:blur(18px) saturate(1.15);
+  backdrop-filter:blur(18px) saturate(1.15);
+  border:1px solid var(--panel-border);
+  border-radius:var(--radius);
+  padding:1.4rem 1.15rem 1.55rem;
+}
+section{ padding-block:1.5rem; }
+.hero{
+  min-height:100dvh; display:flex; flex-direction:column;
+  padding:1.1rem var(--pad) 2.2rem;
+}
+.topbar{ display:flex; align-items:center; gap:.6rem; }
+.topbar img{ width:42px; height:42px; display:block; }
+.topbar .mark-word{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  font-size:1.18rem; color:var(--ink); text-shadow:0 1px 10px rgba(0,0,0,.55);
+}
+.hero-center{ margin-top:auto; }
+.eyebrow{ display:flex; align-items:center; gap:.6rem; margin-bottom:.7rem; }
+.eyebrow .rule{ width:42px; height:1px; background:var(--accent); display:inline-block; }
+.eyebrow .lbl{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  color:var(--accent); font-size:1.05rem; letter-spacing:.01em;
+}
+.hero-word{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  font-size:clamp(3.2rem,19vw,5rem); line-height:1.02; color:var(--ink);
+  text-shadow:0 2px 22px rgba(0,0,0,.7), 0 0 1px rgba(0,0,0,.5);
+}
+.hero-tag{ margin-top:.55rem; color:var(--muted); font-size:.98rem; }
+.nav{
+  position:sticky; top:0; z-index:50;
+  background:var(--panel-strong);
+  -webkit-backdrop-filter:blur(18px) saturate(1.15);
+  backdrop-filter:blur(18px) saturate(1.15);
+  border-bottom:1px solid var(--panel-border);
+}
+.nav-scroll{
+  display:flex; gap:.45rem; overflow-x:auto; padding:.55rem var(--pad);
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+.nav-scroll::-webkit-scrollbar{ display:none; }
+.nav a{
+  flex:0 0 auto; min-height:38px; display:inline-flex; align-items:center;
+  padding:.3rem .9rem; border-radius:999px;
+  border:1px solid var(--panel-border);
+  color:var(--ink); text-decoration:none; font-size:.92rem; font-weight:500;
+  white-space:nowrap; transition:background .25s ease,color .25s ease,border-color .25s ease;
+}
+.nav a.active{ background:var(--accent); color:#1a120a; border-color:var(--accent); font-weight:700; }
+.sec-eyebrow{ display:flex; align-items:center; gap:.55rem; margin-bottom:.5rem; }
+.sec-eyebrow .num{
+  font-family:"Tajawal",sans-serif; font-weight:500; letter-spacing:.18em;
+  color:var(--accent); font-size:.82rem;
+}
+.sec-eyebrow .rule{ width:30px; height:1px; background:var(--accent); }
+.sec-title{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  color:var(--accent); font-size:2rem; line-height:1.1; margin-bottom:1.05rem;
+}
+.group + .group{ margin-top:1.35rem; }
+.group-title{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  color:var(--ink); font-size:1.18rem; margin-bottom:.35rem; opacity:.95;
+}
+.row{
+  display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
+  padding-block:.72rem; border-bottom:1px dashed var(--hair);
+}
+.row:last-child{ border-bottom:0; }
+.row .name{ font-weight:500; color:var(--ink); font-size:1.02rem; }
+.row .desc{ display:block; color:var(--muted); font-size:.82rem; font-weight:300; margin-top:.15rem; line-height:1.45; }
+.row .price{
+  flex:0 0 auto; color:var(--accent);
+  font-family:"Tajawal","Inter Tight",sans-serif; font-weight:700;
+  font-variant-numeric:tabular-nums; font-size:1rem; white-space:nowrap; text-align:left;
+}
+.note-inline{ color:var(--muted); font-size:.8rem; font-weight:400; }
+.pause{ padding-block:3.2rem; text-align:center; }
+.pause p{
+  font-family:"Amiri",serif; font-style:italic; font-weight:400;
+  font-size:1.45rem; line-height:1.7; color:var(--ink);
+  text-shadow:0 2px 16px rgba(0,0,0,.7);
+}
+.pause p .hot{ color:var(--accent); }
+.pause .hair{ width:64px; height:1px; background:var(--accent); margin:1.1rem auto 0; opacity:.8; }
+footer{ padding:1.8rem var(--pad) 2.4rem; }
+.foot-panel{ text-align:center; }
+.foot-panel img{ width:96px; height:96px; margin-inline:auto; display:block; }
+.foot-word{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  font-size:2.1rem; color:var(--ink); margin-top:.35rem;
+}
+.foot-block{ margin-top:1.2rem; color:var(--ink); }
+.foot-block .h{ font-family:"Amiri",serif; font-style:italic; color:var(--accent); font-size:1.1rem; margin-bottom:.25rem; }
+.foot-block p{ color:var(--muted); font-size:.95rem; }
+.foot-divider{ width:100%; height:1px; background:var(--hair); margin:1.3rem 0; }
+.foot-bottom{ display:flex; flex-direction:column; gap:.35rem; color:var(--muted); font-size:.82rem; }
+.foot-block .phones{ margin-top:.4rem; font-variant-numeric:tabular-nums; letter-spacing:.03em; }
+.foot-block .phones .num{ color:#ffffff; font-weight:500; }
+.foot-bottom .b1{ color:var(--ink); }
+.foot-bottom .credit{ margin-top:.65rem; font-size:.72rem; letter-spacing:.04em; color:var(--muted); font-variant-numeric:tabular-nums; }
+.foot-bottom .credit .num{ color:#ffffff; font-weight:500; }
+@media (prefers-reduced-motion: no-preference){
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .bg-stage video{ display:none; }
+}
+.skeleton-wrap{ padding:3rem var(--pad); text-align:center; color:var(--muted); }
+.skeleton-wrap .dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); margin:0 3px; opacity:.5; animation:bl 1.2s infinite ease-in-out; }
+.skeleton-wrap .dot:nth-child(2){ animation-delay:.15s; }
+.skeleton-wrap .dot:nth-child(3){ animation-delay:.3s; }
+@keyframes bl{ 0%,80%,100%{ opacity:.25; transform:scale(.85);} 40%{ opacity:1; transform:scale(1.1);} }
+
+/* ============================================================
+   OFFER POPUP  (small floating card · no backdrop · X to close)
+   ============================================================ */
+.offer-host{
+  position:fixed; z-index:200;
+  inset:auto 0 calc(env(safe-area-inset-bottom, 0px) + 1rem) 0;
+  display:flex; justify-content:center; pointer-events:none;
+  padding:0 .75rem;
+}
+.offer-card{
+  position:relative; pointer-events:auto;
+  width:100%; max-width:380px;
+  display:grid;
+  grid-template-columns:64px 1fr 28px;
+  gap:.7rem;
+  align-items:center;
+  padding:.55rem .8rem .55rem .55rem;
+  background:linear-gradient(180deg, rgba(34,22,12,.94) 0%, rgba(20,14,9,.96) 100%);
+  border:1px solid rgba(184,134,85,.42);
+  border-radius:18px;
+  color:var(--ink);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 18px 40px rgba(0,0,0,.55),
+    0 6px 14px rgba(0,0,0,.35);
+  -webkit-backdrop-filter:blur(14px) saturate(1.15);
+  backdrop-filter:blur(14px) saturate(1.15);
+  text-decoration:none;
+  opacity:0; transform:translateY(40px) scale(.96);
+  transition:opacity .35s ease, transform .55s cubic-bezier(.22,1.36,.32,1);
+  touch-action:pan-y;
+  overflow:hidden;
+}
+.offer-card.show{
+  opacity:1; transform:translateY(0) scale(1);
+  animation:offerBob 4.5s ease-in-out 1.2s infinite;
+}
+@keyframes offerBob{
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%   { transform:translateY(-3px) scale(1); }
+}
+.offer-card .thumb{
+  width:64px; height:64px; border-radius:14px;
+  background:#0d0905 center/cover no-repeat;
+  border:1px solid rgba(184,134,85,.3);
+  flex:0 0 auto;
+}
+.offer-card .thumb.no-image{
+  display:flex; align-items:center; justify-content:center;
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  color:var(--accent); font-size:1.4rem;
+  background:radial-gradient(70% 70% at 50% 35%, rgba(184,134,85,.22) 0%, rgba(20,14,9,.4) 70%);
+}
+.offer-card .text{ min-width:0; }
+.offer-card .ribbon{
+  display:inline-flex; align-items:center; gap:.3rem;
+  color:var(--accent); font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  font-size:.8rem; letter-spacing:.02em;
+  margin-bottom:.05rem;
+}
+.offer-card .ribbon .dot{
+  width:5px; height:5px; border-radius:50%; background:var(--accent);
+  box-shadow:0 0 0 4px rgba(184,134,85,.18);
+  animation:offerPulse 2.2s ease-in-out infinite;
+}
+@keyframes offerPulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(184,134,85,.45); }
+  50%   { box-shadow:0 0 0 7px rgba(184,134,85,0); }
+}
+.offer-card .title{
+  font-family:"Amiri",serif; font-style:italic; font-weight:700;
+  color:var(--ink); font-size:1.02rem; line-height:1.2;
+  margin:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.offer-card .subtitle{
+  margin-top:.1rem; color:var(--muted); font-size:.78rem; line-height:1.35;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.offer-card .close{
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(0,0,0,.45);
+  border:1px solid var(--panel-border);
+  color:var(--ink); font-size:.95rem; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; padding:0;
+  transition:color .2s ease, background .2s ease, transform .2s ease;
+  flex:0 0 auto;
+}
+.offer-card .close:hover{ color:var(--accent); background:rgba(0,0,0,.65); }
+.offer-card .close:active{ transform:scale(.92); }
+.offer-card.dismissing{
+  opacity:0; transform:translateY(40px) scale(.96);
+  animation:none;
+}
+@media (prefers-reduced-motion: reduce){
+  .offer-card{ transition:opacity .2s ease; transform:none; animation:none !important; }
+  .offer-card.show{ transform:none; animation:none !important; }
+  .offer-card .ribbon .dot{ animation:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-stage" aria-hidden="true">
+  <img class="poster" src="video-poster.jpg" alt="" />
+  <video id="bgvideo" muted autoplay loop playsinline preload="auto" poster="video-poster.jpg">
+    <source src="video-background.mp4" type="video/mp4" />
+  </video>
+</div>
+<div class="scrim" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="topbar">
+    <picture>
+      <source srcset="logo-256.webp" type="image/webp" />
+      <img src="logo-256.png" alt="مقهى الست" width="42" height="42" />
+    </picture>
+    <span class="mark-word" data-bind="brand">مقهى الست</span>
+  </div>
+
+  <div class="hero-center">
+    <div class="eyebrow">
+      <span class="rule"></span>
+      <span class="lbl" data-bind="menuLabel">المنيو</span>
+    </div>
+    <h1 class="hero-word" data-bind="brand">مقهى الست</h1>
+    <p class="hero-tag" data-bind="tagline">بطعم الزمن الجميل · من زمن أم كلثوم</p>
+  </div>
+</header>
+
+<nav class="nav" aria-label="أقسام المنيو">
+  <div class="nav-scroll" id="navScroll"></div>
+</nav>
+
+<main id="menuMain">
+  <div class="skeleton-wrap"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="panel panel-strong foot-panel" style="background:var(--panel-strong)">
+      <picture>
+        <source srcset="logo-256.webp" type="image/webp" />
+        <img src="logo-256.png" alt="مقهى الست" width="96" height="96" />
+      </picture>
+      <div class="foot-word" data-bind="brand">مقهى الست</div>
+
+      <div class="foot-block">
+        <div class="h" data-bind="hoursTitle">أوقات العمل</div>
+        <p data-bind="hoursText"></p>
+      </div>
+      <div class="foot-block">
+        <div class="h" data-bind="reservationsTitle">الحجوزات</div>
+        <p data-bind="reservationsText"></p>
+        <p class="phones" id="footPhones" dir="ltr"></p>
+      </div>
+
+      <div class="foot-divider"></div>
+
+      <div class="foot-bottom">
+        <span class="b1" data-bind="year"></span>
+        <span data-bind="priceNote"></span>
+        <span class="credit" dir="ltr"><span data-bind="credit"></span> · <span class="num" data-bind="creditNum"></span></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== OFFER POPUP (rendered dynamically) ===== -->
+<div id="offerHost" aria-live="polite"></div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var v = document.getElementById("bgvideo");
+  if (v){
+    if (reduce){ try{ v.pause(); v.removeAttribute("autoplay"); }catch(e){} }
+    else { var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+  }
+
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+    return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c];
+  }); }
+
+  function renderItem(it){
+    var name = esc(it.name || "");
+    var bits = "";
+    if (it.desc) bits += '<span class="desc">' + esc(it.desc) + '</span>';
+    if (it.note) bits += ' <span class="note-inline">' + esc(it.note) + '</span>';
+    var price = it.price ? '<span class="price">' + esc(it.price) + '</span>' : "";
+    return '<div class="row"><span class="name">' + name + bits + '</span>' + price + '</div>';
+  }
+
+  function renderGroup(g){
+    var head = g.title ? '<h3 class="group-title">' + esc(g.title) + '</h3>' : "";
+    var rows = (g.items || []).map(renderItem).join("");
+    return '<div class="group">' + head + rows + '</div>';
+  }
+
+  function renderSection(b){
+    var eyebrow = b.eyebrow ? '<div class="sec-eyebrow"><span class="rule"></span><span class="num">' + esc(b.eyebrow) + '</span></div>' : "";
+    var title   = b.title ? '<h2 class="sec-title">' + esc(b.title) + '</h2>' : "";
+    var groups  = (b.groups || []).map(renderGroup).join("");
+    return '<section id="' + esc(b.id) + '" class="reveal">' +
+             '<div class="wrap"><div class="panel">' + eyebrow + title + groups + '</div></div>' +
+           '</section>';
+  }
+
+  function renderPause(b){
+    return '<section class="pause reveal"><div class="wrap"><p>' + (b.text || "") + '</p><span class="hair"></span></div></section>';
+  }
+
+  function applyMeta(meta){
+    if (!meta) return;
+    document.querySelectorAll("[data-bind]").forEach(function(el){
+      var key = el.getAttribute("data-bind");
+      if (meta[key] != null) { el.textContent = meta[key]; return; }
+      if (meta.footer && meta.footer[key] != null){ el.textContent = meta.footer[key]; return; }
+    });
+    var phonesEl = document.getElementById("footPhones");
+    if (phonesEl && meta.footer && Array.isArray(meta.footer.phones)){
+      phonesEl.innerHTML = meta.footer.phones.map(function(p){
+        return '<span class="num">' + esc(p) + '</span>';
+      }).join(" · ");
+    }
+  }
+
+  function renderMenu(data){
+    applyMeta(data.meta);
+    var nav = document.getElementById("navScroll");
+    var main = document.getElementById("menuMain");
+    if (!nav || !main) return;
+
+    var navHtml = (data.blocks || [])
+      .filter(function(b){ return b.type === "section"; })
+      .map(function(b){ return '<a href="#' + esc(b.id) + '">' + esc(b.navLabel || b.title || b.id) + '</a>'; })
+      .join("");
+    nav.innerHTML = navHtml;
+
+    var mainHtml = (data.blocks || []).map(function(b){
+      return b.type === "pause" ? renderPause(b) : renderSection(b);
+    }).join("");
+    main.innerHTML = mainHtml;
+
+    enhance();
+    maybeShowOffer(data.meta && data.meta.offer);
+  }
+
+  /* ===== OFFER POPUP (small floating card · no backdrop · X to close) ===== */
+  function offerSeenKey(offer){
+    return "alsit_offer_seen" + (window.BRANCH_BASE || "") + "_v" + (offer && offer.version ? offer.version : 1);
+  }
+  function maybeShowOffer(offer){
+    if (!offer || !offer.enabled) return;
+    if (!offer.image && !offer.title && !offer.subtitle) return;
+    try {
+      if (offer.showOnce !== false && localStorage.getItem(offerSeenKey(offer)) === "1") return;
+    } catch (e){}
+    setTimeout(function(){ showOffer(offer); }, 800);
+  }
+  function showOffer(offer){
+    var host = document.getElementById("offerHost");
+    if (!host) return;
+    host.className = "offer-host";
+
+    var thumb;
+    if (offer.image){
+      // Use safe attribute insertion via inline style with an escaped URL
+      var safeUrl = String(offer.image).replace(/"/g, "%22");
+      thumb = '<div class="thumb" style="background-image:url(\'' + safeUrl + '\')"></div>';
+    } else {
+      thumb = '<div class="thumb no-image">عرض</div>';
+    }
+
+    var ribbon  = '<span class="ribbon"><span class="dot"></span>عرض خاص</span>';
+    var title   = offer.title    ? '<h2 class="title">'    + esc(offer.title)    + '</h2>' : "";
+    var sub     = offer.subtitle ? '<div class="subtitle">'+ esc(offer.subtitle) + '</div>' : "";
+
+    var inner =
+      thumb +
+      '<div class="text">' + ribbon + title + sub + '</div>' +
+      '<button class="close" type="button" aria-label="إغلاق">×</button>';
+
+    var tag, attrs = 'class="offer-card" role="dialog" aria-live="polite"';
+    if (offer.ctaHref){
+      tag = "a";
+      attrs += ' href="' + esc(offer.ctaHref) + '" target="_blank" rel="noopener"';
+    } else {
+      tag = "div";
+    }
+
+    host.innerHTML = "<" + tag + " " + attrs + ">" + inner + "</" + tag + ">";
+    var card = host.firstChild;
+
+    // open animation
+    requestAnimationFrame(function(){
+      card.classList.add("show");
+    });
+
+    function dismiss(e){
+      if (e){ e.preventDefault(); e.stopPropagation(); }
+      card.classList.remove("show");
+      card.classList.add("dismissing");
+      try {
+        if (offer.showOnce !== false) localStorage.setItem(offerSeenKey(offer), "1");
+      } catch (err){}
+      setTimeout(function(){ host.innerHTML = ""; host.className = ""; }, 450);
+    }
+
+    // close button
+    var closeBtn = card.querySelector(".close");
+    if (closeBtn) closeBtn.addEventListener("click", dismiss);
+
+    // ESC closes (desktop)
+    function onKey(e){
+      if (e.key === "Escape"){ dismiss(); document.removeEventListener("keydown", onKey); }
+    }
+    document.addEventListener("keydown", onKey);
+
+    // mark seen if user taps the card link
+    if (offer.ctaHref){
+      card.addEventListener("click", function(e){
+        if (e.target.closest(".close")) return;
+        try { if (offer.showOnce !== false) localStorage.setItem(offerSeenKey(offer), "1"); } catch(err){}
+      });
+    }
+
+    enableSwipeDismiss(card, dismiss);
+  }
+  function enableSwipeDismiss(card, dismiss){
+    var startY = 0, dy = 0, dragging = false;
+    function onStart(e){
+      if (e.target.closest && e.target.closest(".close")) return;
+      var y = (e.touches ? e.touches[0].clientY : e.clientY);
+      startY = y; dy = 0; dragging = true;
+      card.style.transition = "none";
+      card.style.animation = "none";
+    }
+    function onMove(e){
+      if (!dragging) return;
+      var y = (e.touches ? e.touches[0].clientY : e.clientY);
+      dy = y - startY;
+      // allow only downward drag for dismissal
+      if (dy < 0) dy = dy * 0.25;
+      card.style.transform = "translateY(" + dy + "px)";
+    }
+    function onEnd(){
+      if (!dragging) return;
+      dragging = false;
+      card.style.transition = "";
+      if (dy > 60){ dismiss(); }
+      else {
+        card.style.transform = "";
+        card.style.animation = "";
+      }
+    }
+    card.addEventListener("touchstart", onStart, { passive:true });
+    card.addEventListener("touchmove",  onMove,  { passive:true });
+    card.addEventListener("touchend",   onEnd);
+    card.addEventListener("touchcancel",onEnd);
+  }
+
+  function enhance(){
+    var reveals = document.querySelectorAll(".reveal");
+    if (!reduce && "IntersectionObserver" in window){
+      var ro = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting){ en.target.classList.add("in"); ro.unobserve(en.target); }
+        });
+      }, { rootMargin:"0px 0px -10% 0px", threshold:.08 });
+      reveals.forEach(function(el){ ro.observe(el); });
+    } else {
+      reveals.forEach(function(el){ el.classList.add("in"); });
+    }
+
+    var links = Array.prototype.slice.call(document.querySelectorAll(".nav a"));
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute("href").slice(1)] = a; });
+    var current = null;
+    if ("IntersectionObserver" in window){
+      var so = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting){
+            var a = map[en.target.id];
+            if (a && a !== current){
+              if (current) current.classList.remove("active");
+              a.classList.add("active");
+              current = a;
+              a.scrollIntoView({ inline:"center", block:"nearest", behavior: reduce ? "auto" : "smooth" });
+            }
+          }
+        });
+      }, { rootMargin:"-45% 0px -50% 0px", threshold:0 });
+      Object.keys(map).forEach(function(id){
+        var sec = document.getElementById(id);
+        if (sec) so.observe(sec);
+      });
+    }
+
+    links.forEach(function(a){
+      a.addEventListener("click", function(e){
+        var id = a.getAttribute("href").slice(1);
+        var t = document.getElementById(id);
+        if (t){ e.preventDefault(); t.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block:"start" }); }
+      });
+    });
+  }
+
+  fetch(BRANCH_BASE + "/api/menu", { cache: "no-store" })
+    .then(function(r){ if (!r.ok) throw new Error("menu fetch failed"); return r.json(); })
+    .then(renderMenu)
+    .catch(function(err){
+      var main = document.getElementById("menuMain");
+      if (main) main.innerHTML = '<div class="wrap"><div class="panel"><p style="color:var(--muted);text-align:center">تعذر تحميل المنيو. يرجى المحاولة لاحقاً.</p></div></div>';
+      console.error(err);
+    });
+})();
+</script>
+</body>
+</html>

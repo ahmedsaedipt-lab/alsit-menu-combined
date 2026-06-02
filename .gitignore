@@ -1,0 +1,6 @@
+node_modules/
+data/branch1/.backups/
+data/branch2/.backups/
+*.log
+.env
+old menu.pdf
